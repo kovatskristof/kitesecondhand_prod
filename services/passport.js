@@ -21,8 +21,8 @@ passport.use(
     new GoogleStrategy({
             clientID: keys.googleClientID,
             clientSecret: keys.googleClientSecret,
-            callbackURL: '/auth/google/callback'
-
+            callbackURL: '/auth/google/callback',
+            proxy: true
         }, (accessToken, refreshToken, profile, done) => {
             User.findOne({ googleId: profile.id }).then(existingUser => {
                 if(existingUser){
@@ -43,7 +43,8 @@ passport.use(
 passport.use(new FacebookStrategy({
         clientID: keys.facebookAppID,
         clientSecret: keys.facebookAppSecret,
-        callbackURL: "/auth/facebook/callback"
+        callbackURL: "/auth/facebook/callback",
+        proxy: true
     }, (accessToken, refreshToken, profile, done) => {
         User.findOne({ facebookId: profile.id }).then(existingUser => {
             if(existingUser){
