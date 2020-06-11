@@ -23,19 +23,15 @@ passport.use(
             clientSecret: keys.googleClientSecret,
             callbackURL: '/auth/google/callback',
             proxy: true
-        }, (accessToken, refreshToken, profile, done) => {
-            User.findOne({ googleId: profile.id }).then(existingUser => {
-                if(existingUser){
-                    //find existing user profile
-                    done(null, existingUser);
-                }else{
-                    //create new user
-                    new User({googleId: profile.id})
-                        .save()
-                        .then(user => done(null, user));
-                }
-
-            });
+        }, async (accessToken, refreshToken, profile, done) => {
+            const existingUser = await User.findOne({googleId: profile.id});
+            if (existingUser) {
+                //find existing user profile
+                return done(null, existingUser);
+            }
+            //create new user
+            const user = await new User({googleId: profile.id}).save();
+            done(null, user);
         }
     )
 );
@@ -45,19 +41,17 @@ passport.use(new FacebookStrategy({
         clientSecret: keys.facebookAppSecret,
         callbackURL: "/auth/facebook/callback",
         proxy: true
-    }, (accessToken, refreshToken, profile, done) => {
-        User.findOne({ facebookId: profile.id }).then(existingUser => {
-            if(existingUser){
+    },
+    async (accessToken, refreshToken, profile, done) => {
+        const existingUser = await User.findOne({facebookId: profile.id});
+            if (existingUser) {
                 //find existing user profile
                 done(null, existingUser);
-            }else{
-                //create new user
-                new User({facebookId: profile.id})
-                    .save()
-                    .then(user => done(null, user));
             }
+                //create new user
+                const user = await new User({facebookId: profile.id}).save();
+                done(null, user);
 
-        });
     }
     )
 );
