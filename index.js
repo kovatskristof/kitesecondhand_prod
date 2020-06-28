@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
+const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 
@@ -12,6 +13,7 @@ require('./services/passport');
 
 const app = express();
 
+app.use(flash());
 app.use(bodyParser.json());
 app.use(
     cookieSession({

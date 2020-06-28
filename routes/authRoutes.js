@@ -1,6 +1,15 @@
 const passport = require('passport');
 
 module.exports = (app) => {
+
+    app.get('/',isLoggedIn,(req,res)=>{
+        console.log("req user",req.user);
+        res.render('home',{
+            user : req.user
+        });
+    });
+
+
     app.get('/auth/google', passport.authenticate('google', {
         scope: ['profile', 'email']
     }));
@@ -27,8 +36,8 @@ module.exports = (app) => {
 
     app.post('/auth/signup', passport.authenticate('local-signup', {
 
-        successRedirect : '/', // redirect to the secure profile section
-        failureRedirect : '/signup', // redirect back to the signup page if there is an error
+        successRedirect : '/surveys', // redirect to the secure profile section
+        failureRedirect : '/login', // redirect back to the signup page if there is an error
         failureFlash : true // allow flash messages
     }
 
@@ -41,6 +50,19 @@ module.exports = (app) => {
 
     app.get('/api/current_user', (req, res) => {
         res.send(req.user)});
+
+    // route middleware to make sure a user is logged in
+    function isLoggedIn(req, res, next) {
+
+        // if user is authenticated in the session, carry on
+        if (req.isAuthenticated())
+            return next();
+
+        // if they aren't redirect them to the home page
+        res.redirect('/login');
+    }
+
+
 };
 
 // { successRedirect: '/',
